@@ -13,7 +13,6 @@
 
     // Save Scope
     dfpScript = this,
-
     // DFP account ID
     dfpID = '',
 
@@ -52,10 +51,8 @@
         dfpLoader();
         setOptions(options);
 
-        $(function () {
-            createAds();
-            displayAds();
-        });
+        createAds();
+        displayAds();
 
     },
 
@@ -172,14 +169,14 @@
 
                     googleAdUnit.oldRenderEnded();
 
-                    // Excute afterEachAdLoaded callback if provided
-                    if (typeof dfpOptions.afterEachAdLoaded === 'function') {
-                        dfpOptions.afterEachAdLoaded.call(this, $adUnit);
-                    }
+					// trigger that ad unit was loaded
+                    $adUnit.trigger("adLoaded");
+
 
                     // Excute afterAllAdsLoaded callback if provided
-                    if (typeof dfpOptions.afterAllAdsLoaded === 'function' && rendered === count) {
-                        dfpOptions.afterAllAdsLoaded.call(this, $adCollection);
+                    if (rendered === count) {
+                    	$adCollection.trigger("allAdsLoaded");
+                        //dfpOptions.afterAllAdsLoaded.call(this, $adCollection);
                     }
 
                 };
@@ -301,8 +298,10 @@
      * @return String        The name of the adunit, will be the same as inside DFP
      */
     getName = function ($adUnit) {
-
-        return $adUnit.data('adunit') || $adUnit.attr('id');
+    
+        return $adUnit.data('adunit')
+        	|| $("meta[name=dfp-adunit]").attr("content")
+        	|| $adUnit.attr('id');
 
     },
 
@@ -437,34 +436,14 @@
 
     };
 
-    /**
-     * Add function to the jQuery / Zepto / tire namespace
-     * @param  String id      (Optional) The DFP account ID
-     * @param  Object options (Optional) Custom options to apply
-     */
-    $.dfp = $.fn.dfp = function (id, options) {
-
-        options = options || {};
-
-        if (id === undefined) {
-            id = dfpID;
-        }
-
-        if (typeof id === 'object') {
-            options = id;
-            id = options.dfpID || dfpID;
-        }
-
-        var selector = this;
-
-        if (typeof this === 'function') {
-            selector = dfpSelector;
-        }
-
-        init(id, selector, options);
-
-        return this;
-
-    };
-
+	$(function() {
+	
+		// Get Network Id From Metadata
+		var networkId = $("meta[name=dfp-id]").attr("content");
+		
+		// Init Doubclick Library
+		init(networkId,dfpSelector,{});
+		
+	});
+    	
 })(window.jQuery || window.Zepto || window.tire, window);

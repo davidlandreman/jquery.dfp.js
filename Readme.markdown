@@ -48,52 +48,24 @@ Calling the script:
         <title>DFP TEST</title>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
         <script src="jquery.dfp.min.js"></script>
+        
+        <!-- DoubleClick Targeting Information -->
+		<meta name="dfp-id" content="8919" />
+		<meta name="dfp-adunit" content="10TV_ROS/10TV_Homepage" />
+		<meta name="dfp-targeting" content='{"gender":"male"}' />
+        
     </head>
     <body>
 
-        <div class="adunit" id="Middle_Feature" data-dimensions="393x176" data-targeting='{"city_id":"1"}'></div>
-
-        <script>
-
-            $.dfp({
-                dfpID: 'xxxxxxxxx'
-            });
-
-        </script>
+        <div class="adunit"
+        	data-dimensions="728x90"
+        	data-targeting='{"city_id":"1"}'>
+        </div>
 
     </body>
     </html>
 
-Using a bootstrap file (take a look at [example-bootstrap.js](https://github.com/coop182/jquery.dfp.js/blob/master/example-bootstrap.js)):
 
-    <html>
-    <head>
-        <title>DFP TEST</title>
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
-        <script src="example-bootstrap.js"></script>
-    </head>
-    <body>
-
-        <div class="adunit" id="Middle_Feature" data-dimensions="393x176" data-targeting='{"city_id":"1"}'></div>
-
-    </body>
-    </html>
-
-You can init the script in the following ways:
-
-<pre>
-$.dfp('xxxxxxxxx');
-</pre>
-<pre>
-$.dfp({
-    dfpID:'xxxxxxxxx'
-});
-</pre>
-<pre>
-$('selector').dfp({
-    dfpID:'xxxxxxxxx'
-});
-</pre>
 
 Available Options
 -----------------
@@ -136,33 +108,21 @@ Available Options
 Callbacks
 ---------
 
-This script provides two callbacks which you can use to make working with DFP a little easier.
+This script exposes jQuery events that can bound bound to to handle ad loads:
 
-<table>
-    <tr>
-        <th>Callback</th>
-        <th>Parameters</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <td>afterEachAdLoaded(adUnit)</td>
-        <td>
-            <ul>
-                <li>adUnit - jQuery Object - the jQuery object</li>
-            </ul>
-        </td>
-        <td>This is called after each ad unit has finished rendering.</td>
-    </tr>
-    <tr>
-        <td>afterAllAdsLoaded(adUnits)</td>
-        <td>
-            <ul>
-                <li>adUnits - jQuery Object - the jQuery object containing all selected ad units</li>
-            </ul>
-        </td>
-        <td>This is called after all ad units have finished rendering.</td>
-    </tr>
-</table>
+	<script type="text/javascript">
+			
+		// Get single ad loaded
+		$(".adunit").bind("adLoaded", function() {
+			//alert($(this).width() + " x " + $(this).height());
+		});
+		
+		// Get all ads loaded
+		$("body").bind("allAdsLoaded", function() {
+			//alert("All Ads Loaded");	
+		});
+		
+	</script>
 
 Please see the example-bootstrap.js file for an example of how to use these.
 

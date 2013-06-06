@@ -1,0 +1,45 @@
+<html>
+	<head>
+	
+		<!-- Required Javascripts -->
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+		<script type="text/javascript" src="jquery.dfp.js"></script>
+	
+		<!-- DoubleClick Targeting Information -->
+		<meta name="dfp-id" content="8919" />
+		<meta name="dfp-adunit" content="10TV_ROS/10TV_Homepage" />
+		<meta name="dfp-targeting" content='{"gender":"male"}' />
+	
+	</head>
+	<body>
+	
+		<!-- Some Sample Ad Tags -->
+		<h1>Leaderboard</h1>
+		<div class="adunit" 
+			data-dimensions="728x90" 
+			data-targeting='{"fold":"above"}'>
+		</div>
+		
+		<h1>Square</h1>
+		<div class="adunit" 
+			data-dimensions="300x250" 
+			data-targeting='{"fold":"above"}'>
+		</div>
+		
+		<!-- Samples of how to interact with Ad Positions -->
+		<script type="text/javascript">
+		
+			// Get single ad loaded
+			$(".adunit").bind("adLoaded", function() {
+				//alert($(this).width() + " x " + $(this).height());
+			});
+			
+			// Get all ads loaded
+			$("body").bind("allAdsLoaded", function() {
+				//alert("All Ads Loaded");	
+			});
+			
+		</script>
+		
+	</body>
+</html>
