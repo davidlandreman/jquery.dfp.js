@@ -26,7 +26,7 @@
 			data-targeting='{"fold":"above"}'>
 		</div>
 		
-		<!-- Samples of how to interact with Ad Positions -->
+		<!-- Samples of how to interact with Ads events -->
 		<script type="text/javascript">
 		
 			// Get single ad loaded
@@ -37,6 +37,13 @@
 			// Get all ads loaded
 			$("body").bind("allAdsLoaded", function() {
 				//alert("All Ads Loaded");	
+			});
+			
+			// Before Ads Load set some properties
+			$("body").bind("beforeAdsLoad", function(options) {
+				options.enableSingleRequest = true;
+	            options.collapseEmptyDivs = 'original';
+	            options.targetPlatform = 'web';
 			});
 			
 		</script>

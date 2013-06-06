@@ -441,8 +441,12 @@
 		// Get Network Id From Metadata
 		var networkId = $("meta[name=dfp-id]").attr("content");
 		
+		// Get possible options from a jquery callback
+		var options = {}
+		$("body").trigger("beforeAdsLoad",options);
+		
 		// Init Doubclick Library
-		init(networkId,dfpSelector,{});
+		init(networkId,dfpSelector,options);
 		
 	});
     	

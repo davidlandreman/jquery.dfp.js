@@ -14,13 +14,11 @@ You can add containers to your page in any location that you would like to displ
 
 By default this script will look for ad units with a class of `adunit` but you can of course use jQuery selectors as well.
 
-The minimum information required for an ad unit to function is having the ad unit specified. To do this you can use the id parameter of the element, for example:
+You can specify a global ad unit name for all positions on the page using a document meta value:
 
-    <div class="adunit" id="Ad_unit_id"></div>
+	<meta name="dfp-adunit" content="10TV_ROS/10TV_Homepage" />
 
-In the example above the ID of the div element will be used to look up a corresponding ad unit in DFP and the dimensions of the adunit will be set to the same dimensions of the div which could be defined in your CSS.
-
-You can optionally specify the adunit name and dimensions in the following way:
+You can optionally specify the adunit name per position in the following way:
 
     <div class="adunit" data-adunit="Ad_unit_id" data-dimensions="393x176"></div>
 
@@ -76,14 +74,6 @@ Available Options
         <th>Description</th>
     </tr>
     <tr>
-        <td>dfpID</td>
-        <td>This string is your unique DFP account ID.</td>
-    </tr>
-    <tr>
-        <td>setTargeting</td>
-        <td>This object is where you set custom targeting key value pairs. Also see the Default Targeting options that are set further down the page.</td>
-    </tr>
-    <tr>
         <td>enableSingleRequest</td>
         <td>This boolean sets whether the page ads are fetched with a single request or not, you will need to set this to false it you want to call $.dfp() more than once, typically you would do this if you are loading ad units into the page after the initial load.</td>
     </tr>
@@ -95,14 +85,6 @@ Available Options
         <td>refreshExisting</td>
         <td>This boolean controls what happens when dfp is called multiple times on ad units. By default it is set to true which means that if an already initialised ad is initialised again it will instead be refreshed.</td>
     </tr>
-    <tr>
-        <td>afterEachAdLoaded</td>
-        <td>This is a call back function, see below for more information.</td>
-    </tr>
-    <tr>
-        <td>afterAllAdsLoaded</td>
-        <td>This is a call back function, see below for more information.</td>
-    </tr>
 </table>
 
 Callbacks
@@ -110,8 +92,9 @@ Callbacks
 
 This script exposes jQuery events that can bound bound to to handle ad loads:
 
+	<!-- Samples of how to interact with Ads events -->
 	<script type="text/javascript">
-			
+	
 		// Get single ad loaded
 		$(".adunit").bind("adLoaded", function() {
 			//alert($(this).width() + " x " + $(this).height());
@@ -120,6 +103,13 @@ This script exposes jQuery events that can bound bound to to handle ad loads:
 		// Get all ads loaded
 		$("body").bind("allAdsLoaded", function() {
 			//alert("All Ads Loaded");	
+		});
+		
+		// Before Ads Load set some properties
+		$("body").bind("beforeAdsLoad", function(options) {
+			options.enableSingleRequest = true;
+            options.collapseEmptyDivs = 'original';
+            options.targetPlatform = 'web';
 		});
 		
 	</script>
