@@ -45,7 +45,13 @@
      */
     init = function (id, selector, options) {
 
+		// trigger before loaded to allow options setting
+		$("body").trigger("beforeAdsLoad",options);
+
+		// get the DFP network ID to use
         dfpID = id;
+        
+        // get collection of adunit divs
         $adCollection = $(selector);
 
         dfpLoader();
@@ -73,12 +79,22 @@
                 'Query': URLTargets.Query,
                 'Domain': window.location.host
             },
+            'enableAdChoices': true,
+            'adChoicesUrl': 'http://www.dispatch.com/adchoices',
             'enableSingleRequest': true,
             'collapseEmptyDivs': 'original',
             'targetPlatform': 'web',
             'enableSyncRendering': false,
             'refreshExisting': true
         };
+        
+        // Load global targeting from metadata if it exists
+        try {
+        	var globalTargeting = $.parseJSON($("meta[name=dfp-targeting]").attr("content"));
+	        $.each(globalTargeting, function (k, v) {
+	        	dfpOptions.setTargeting[k] = v;
+	        }); 
+	    } catch (e) {}
 
         // Merge options objects
         $.extend(true, dfpOptions, options);
@@ -91,6 +107,18 @@
         }
 
     },
+
+
+	/** 
+	* Add neccessary AdChoices structure to advertising div
+	*/
+	displayAdChoices = function($adunit) {
+		if(dfpOptions.enableAdChoices) {
+			$adunit.prepend('<div class="ad-choices"><a href="'
+				+ dfpOptions.adChoicesUrl +
+				'">Ad Choices</a></div>');
+		}
+	},
 
     /**
      * Find and create all Ads
@@ -164,6 +192,9 @@
                         $adUnit.show().html($existingContent);
                         display = 'block display-original';
                     }
+                    
+                    // render ad choices if neccessary
+                    displayAdChoices($adUnit);
 
                     $adUnit.removeClass('display-none').addClass('display-' + display);
 
@@ -443,11 +474,11 @@
 		
 		// Get possible options from a jquery callback
 		var options = {}
-		$("body").trigger("beforeAdsLoad",options);
 		
 		// Init Doubclick Library
 		init(networkId,dfpSelector,options);
 		
 	});
-    	
+
+	
 })(window.jQuery || window.Zepto || window.tire, window);
