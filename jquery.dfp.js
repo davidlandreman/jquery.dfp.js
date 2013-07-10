@@ -8,7 +8,7 @@
 (function ($, window, undefined) {
 
     "use strict";
-
+    
     var
 
     // Save Scope
@@ -79,13 +79,14 @@
                 'Query': URLTargets.Query,
                 'Domain': window.location.host
             },
+            'adUnitName': '',
             'enableAdChoices': true,
             'adChoicesUrl': 'http://www.dispatch.com/adchoices',
             'enableSingleRequest': true,
             'collapseEmptyDivs': 'original',
             'targetPlatform': 'web',
             'enableSyncRendering': false,
-            'refreshExisting': true
+            'refreshExisting': false
         };
         
         // Load global targeting from metadata if it exists
@@ -98,7 +99,7 @@
 
         // Merge options objects
         $.extend(true, dfpOptions, options);
-
+        
         // If a custom googletag is specified, use it.
         if (dfpOptions.googletag) {
             window.googletag.cmd.push(function () {
@@ -116,7 +117,7 @@
 		if(dfpOptions.enableAdChoices) {
 			$adunit.prepend('<div class="ad-choices"><a href="'
 				+ dfpOptions.adChoicesUrl +
-				'">Ad Choices</a></div>');
+				'">AdChoices</a></div>');
 		}
 	},
 
@@ -154,10 +155,10 @@
                 var googleAdUnit,
                     $adUnitData = $adUnit.data(storeAs);
 
-                if ($adUnitData) {
+                if ($adUnitData && dfpOptions.refreshExisting) {
 
-                    // Get existing ad unit
-                    googleAdUnit = $adUnitData;
+                      //Get existing ad unit
+               		  googleAdUnit = $adUnitData;
 
                 } else {
 
@@ -165,10 +166,11 @@
                     if ($adUnit.data('outofpage')) {
                         googleAdUnit = window.googletag.defineOutOfPageSlot('/' + dfpID + '/' + adUnitName, adUnitID).addService(window.googletag.pubads());
                     } else {
+                    	//alert(adUnitName);
                         googleAdUnit = window.googletag.defineSlot('/' + dfpID + '/' + adUnitName, dimensions, adUnitID).addService(window.googletag.pubads());
                     }
 
-                }
+               }
 
                 // Sets custom targeting for just THIS ad unit if it has been specified
                 if ($adUnit.data("targeting")) {
@@ -207,7 +209,6 @@
                     // Excute afterAllAdsLoaded callback if provided
                     if (rendered === count) {
                     	$adCollection.trigger("allAdsLoaded");
-                        //dfpOptions.afterAllAdsLoaded.call(this, $adCollection);
                     }
 
                 };
@@ -215,7 +216,7 @@
                 // Store googleAdUnit reference
                 $adUnit.data(storeAs, googleAdUnit);
 
-            });
+            }); 
 
         });
 
@@ -250,11 +251,13 @@
 
             if (dfpOptions.refreshExisting && $adUnitData && $adUnit.hasClass('display-block')) {
 
-                window.googletag.cmd.push(function () { window.googletag.pubads().refresh([$adUnitData]); });
+                window.googletag.cmd.push(function () { 
+                	window.googletag.pubads().refresh([$adUnitData]); });
 
             } else {
-
-                window.googletag.cmd.push(function () { window.googletag.display($adUnit.attr('id')); });
+				
+                window.googletag.cmd.push(function () { 
+                	window.googletag.display($adUnit.attr('id')); });
 
             }
 
@@ -318,7 +321,8 @@
      */
     getID = function ($adUnit, adUnitName, count) {
 
-        return $adUnit.attr('id') || $adUnit.attr('id', adUnitName + '-auto-gen-id-' + count).attr('id');
+		// $adUnit.attr('id')
+        return $adUnit.attr('id', adUnitName + '-auto-gen-id-' + count).attr('id');
 
     },
 
@@ -329,8 +333,8 @@
      * @return String        The name of the adunit, will be the same as inside DFP
      */
     getName = function ($adUnit) {
-    
-        return $adUnit.data('adunit')
+        return dfpOptions.adUnitName
+        	|| $adUnit.data('adunit')
         	|| $("meta[name=dfp-adunit]").attr("content")
         	|| $adUnit.attr('id');
 
@@ -378,11 +382,12 @@
 
         // make sure we don't load gpt.js multiple times
         dfpIsLoaded = dfpIsLoaded || $('script[src*="googletagservices.com/tag/js/gpt.js"]').length;
-        if (dfpIsLoaded) {
-            return;
+        if (dfpIsLoaded && dfpOptions.refreshExisting) {
+           return;
         }
 
-        window.googletag = window.googletag || {};
+		// reload google tag storage
+        window.googletag = {};
         window.googletag.cmd = window.googletag.cmd || [];
 
         var gads = document.createElement('script');
@@ -466,19 +471,45 @@
         }, 50);
 
     };
+    
+     /**
+     * Add function to the jQuery / Zepto / tire namespace
+     * @param  String id      (Optional) The DFP account ID
+     * @param  Object options (Optional) Custom options to apply
+     */
+    $.dfp = $.fn.dfp = function (id, options) {
+
+        options = options || {};
+
+		if(id === undefined) {
+			id = dfpID || 
+				$("meta[name=dfp-id]").attr("content");
+		}
+		
+        if (typeof id === 'object') {
+            options = id;
+            id = options.dfpID || dfpID || $("meta[name=dfp-id]").attr("content");
+        }
+
+        var selector = this;
+
+        if (typeof this === 'function') {
+            selector = dfpSelector;
+        }
+
+        init(id, selector, options);
+
+        return this;
+
+    };
 
 	$(function() {
-	
-		// Get Network Id From Metadata
-		var networkId = $("meta[name=dfp-id]").attr("content");
-		
-		// Get possible options from a jquery callback
-		var options = {}
-		
-		// Init Doubclick Library
-		init(networkId,dfpSelector,options);
+
+		// Do initial load of advertisments upon page load
+		$.dfp();
 		
 	});
+	
 
 	
 })(window.jQuery || window.Zepto || window.tire, window);

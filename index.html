@@ -2,12 +2,13 @@
 	<head>
 	
 		<!-- Required Javascripts -->
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 		<script type="text/javascript" src="jquery.dfp.js"></script>
 	
 		<!-- DoubleClick Targeting Information -->
 		<meta name="dfp-id" content="8919" />
-		<meta name="dfp-adunit" content="10TV_ROS/10TV_Homepage" />
+		<meta name="dfp-adunit" content="Dispatch_ROS" />
+		<!--  10TV_ROS/10TV_Homepage -->
 		<meta name="dfp-targeting" content='{"pos":"atf"}' />
 	
 	</head>
@@ -16,7 +17,7 @@
 		<!-- Some Sample Ad Tags -->
 		<h1>Leaderboard</h1>
 		<div class="adunit" 
-			data-dimensions="970x90" 
+			data-dimensions="970x90,728x90" 
 			data-targetding='{"pos":"atf"}'>
 		</div>
 		
@@ -26,24 +27,35 @@
 			data-targetding='{"pos":"atf"}'>
 		</div>
 		
+		<h1>Ad Reload Test</h1>
+		<p>Ad Unit Name: <input type="text" name="adunitname" id="adunitname"/></p>
+		<input type="button" id="reload" value="Reload Ads" />
+		
 		<!-- Samples of how to interact with Ads events -->
 		<script type="text/javascript">
 		
-			// Get single ad loaded
+			// Do something after a single ad is loaded
 			$(".adunit").bind("adLoaded", function() {
 				//alert($(this).width() + " x " + $(this).height());
 			});
 			
-			// Get all ads loaded
+			// Do something after all ads are loaded
 			$("body").bind("allAdsLoaded", function() {
 				//alert("All Ads Loaded");	
 			});
 			
 			// Before Ads Load set some properties
 			$("body").bind("beforeAdsLoad", function(options) {
-				options.enableSingleRequest = true;
-	            options.collapseEmptyDivs = 'original';
-	            options.targetPlatform = 'web';
+				//options.enableSingleRequest = true;
+	            //options.collapseEmptyDivs = 'original';
+	            //options.targetPlatform = 'web';
+			});
+			
+			// Dynamically reload all ads
+			$("#reload").click( function () {
+				$.dfp({
+					'adUnitName':$("#adunitname").val()
+				});
 			});
 			
 		</script>
