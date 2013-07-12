@@ -45,6 +45,8 @@
      */
     init = function (id, selector, options) {
 
+		
+		
 		// trigger before loaded to allow options setting
 		$("body").trigger("beforeAdsLoad",options);
 
@@ -178,6 +180,9 @@
                         googleAdUnit.setTargeting(k, v);
                     });
                 }
+                /*$.each(dfpOptions.setTargeting, function (k, v) {
+	                googleAdUnit.setTargeting(k, v);
+	            });*/
 
                 // The following hijacks an internal google method to check if the div has been
                 // collapsed after the ad has been attempted to be loaded.

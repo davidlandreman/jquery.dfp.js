@@ -106,7 +106,7 @@ This script exposes jQuery events that can bound bound to to handle ad loads:
 		});
 		
 		// Before Ads Load set some properties
-		$("body").bind("beforeAdsLoad", function(options) {
+		$("body").bind("beforeAdsLoad", function(event, options) {
 			options.enableSingleRequest = true;
             options.collapseEmptyDivs = 'original';
             options.targetPlatform = 'web';
