@@ -88,7 +88,8 @@
             'collapseEmptyDivs': 'original',
             'targetPlatform': 'web',
             'enableSyncRendering': false,
-            'refreshExisting': false
+            'refreshExisting': false,
+            'testAdUnit': 'DD_TestSite'
         };
         
         // Load global targeting from metadata if it exists
@@ -175,14 +176,13 @@
                }
 
                 // Sets custom targeting for just THIS ad unit if it has been specified
-                if ($adUnit.data("targeting")) {
-                    $.each($adUnit.data("targeting"), function (k, v) {
-                        googleAdUnit.setTargeting(k, v);
-                    });
+                if(window.location.toString().indexOf('test=true') === -1) {
+	                if ($adUnit.data("targeting")) {
+	                    $.each($adUnit.data("targeting"), function (k, v) {
+	                        googleAdUnit.setTargeting(k, v);
+	                    });
+	                }
                 }
-                /*$.each(dfpOptions.setTargeting, function (k, v) {
-	                googleAdUnit.setTargeting(k, v);
-	            });*/
 
                 // The following hijacks an internal google method to check if the div has been
                 // collapsed after the ad has been attempted to be loaded.
@@ -338,6 +338,9 @@
      * @return String        The name of the adunit, will be the same as inside DFP
      */
     getName = function ($adUnit) {
+    	if(window.location.toString().indexOf('test=true') !== -1) {
+    		return dfpOptions.testAdUnit;
+    	}
         return dfpOptions.adUnitName
         	|| $adUnit.data('adunit')
         	|| $("meta[name=dfp-adunit]").attr("content")
